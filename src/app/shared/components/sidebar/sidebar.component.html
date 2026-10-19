@@ -1,0 +1,75 @@
+<!-- Mobile Menu Button (Visible only on small screens) -->
+<button (click)="toggleMobileMenu()" class="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-[#1E2026] text-gray-100 hover:bg-[#2A2D36] focus:outline-none">
+  <svg *ngIf="!isMobileMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+  </svg>
+  <svg *ngIf="isMobileMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+</button>
+
+<!-- Backdrop for mobile -->
+<div *ngIf="isMobileMenuOpen" (click)="toggleMobileMenu()" class="fixed inset-0 bg-[#121316]/80 backdrop-blur-sm z-40 md:hidden"></div>
+
+<!-- Sidebar -->
+<aside
+  [ngClass]="{'translate-x-0': isMobileMenuOpen, '-translate-x-full': !isMobileMenuOpen}"
+  class="fixed md:static inset-y-0 left-0 w-64 bg-[#1E2026] border-r border-[#2A2D36] flex flex-col z-40 transition-transform duration-300 ease-in-out md:translate-x-0"
+>
+  <!-- Spacer for mobile header behind the button -->
+  <div class="h-16 md:hidden border-b border-[#2A2D36] flex items-center px-6">
+      <span class="text-[#C8A27A] font-['Outfit'] font-bold text-lg ml-10">Menu</span>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2 font-['Inter']">
+
+    <ng-container *ngIf="(userRole$ | async) as role">
+
+      <!-- WAITER Links -->
+      <ng-container *ngIf="role === 'WAITER'">
+        <a routerLink="/tables-map" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+          Mapa de Mesas
+        </a>
+        <a routerLink="/my-orders" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+          Meus Pedidos
+        </a>
+      </ng-container>
+
+      <!-- MANAGER / ADMIN Links -->
+      <ng-container *ngIf="role === 'MANAGER' || role === 'ADMIN'">
+        <a routerLink="/dashboard" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>
+          Dashboard
+        </a>
+        <a routerLink="/tables" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+          Mesas
+        </a>
+        <a routerLink="/dishes" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6v6.75H18" /></svg>
+          Pratos
+        </a>
+        <a routerLink="/menus" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+          Cardápios
+        </a>
+        <a routerLink="/kitchen" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" /></svg>
+          Cozinha
+        </a>
+        <a routerLink="/users" routerLinkActive="bg-[#C8A27A] text-[#121316] font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2A2D36] hover:text-gray-100 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+          Usuários
+        </a>
+      </ng-container>
+
+    </ng-container>
+  </nav>
+
+  <!-- Sidebar Footer area if needed -->
+  <div class="p-4 border-t border-[#2A2D36] md:hidden">
+      <!-- You could duplicate the logout button here for mobile if header gets too cramped -->
+  </div>
+</aside>
