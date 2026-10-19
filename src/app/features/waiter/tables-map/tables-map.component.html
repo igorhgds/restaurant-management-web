@@ -1,0 +1,50 @@
+<div class="p-6 bg-[#121316] min-h-screen font-inter">
+  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <h1 class="text-3xl font-semibold text-gray-100 font-outfit">Mapa de Mesas</h1>
+
+    <div class="flex gap-2 bg-[#1E2026] p-1 rounded-lg border border-[#2A2D36] overflow-x-auto">
+      <button
+        *ngFor="let loc of locations"
+        (click)="setFilter(loc)"
+        [class]="selectedLocation() === loc ? 'bg-[#C8A27A] text-gray-900' : 'text-gray-400 hover:bg-white/5'"
+        class="px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap">
+        {{ loc }}
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <div
+      *ngFor="let table of filteredTables()"
+      (click)="onTableClick(table)"
+      [ngClass]="getTableClasses(table.status)"
+      class="border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 min-h-[120px] glassmorphism-hover">
+
+      <span class="text-3xl font-bold font-outfit mb-2">{{ table.number }}</span>
+
+      <div class="flex items-center gap-1 text-xs uppercase tracking-wider font-semibold">
+        <span class="w-2 h-2 rounded-full" [ngClass]="{
+          'bg-emerald-400': table.status === 'AVAILABLE',
+          'bg-red-400': table.status === 'OCCUPIED',
+          'bg-amber-400': table.status === 'RESERVED',
+          'bg-gray-500': table.status === 'OUT_OF_SERVICE'
+        }"></span>
+        {{ translateStatus(table.status) }}
+      </div>
+
+      <span class="text-xs mt-2 opacity-70 flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+        </svg>
+        {{ table.capacity }} lugares
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="tables().length === 0" class="text-center text-gray-400 py-12">
+    Carregando mesas...
+  </div>
+  <div *ngIf="tables().length > 0 && filteredTables().length === 0" class="text-center text-gray-400 py-12">
+    Nenhuma mesa encontrada para o filtro selecionado.
+  </div>
+</div>

@@ -12,10 +12,9 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'tables-map',
         pathMatch: 'full'
       },
-      // Placeholders for routes referenced in sidebar
       {
         path: 'dashboard',
         loadComponent: () => import('./shared/components/placeholder/placeholder.component').then(m => m.PlaceholderComponent)
@@ -42,7 +41,11 @@ export const routes: Routes = [
       },
       {
         path: 'tables-map',
-        loadComponent: () => import('./shared/components/placeholder/placeholder.component').then(m => m.PlaceholderComponent)
+        loadComponent: () => import('./features/waiter/tables-map/tables-map.component').then(m => m.TablesMapComponent)
+      },
+      {
+        path: 'order-create/:tableId',
+        loadComponent: () => import('./features/waiter/order-create/order-create.component').then(m => m.OrderCreateComponent)
       },
       {
         path: 'my-orders',
