@@ -34,13 +34,14 @@ export class LoginComponent {
 
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
+          this.isLoading = false;
           const role = this.authService.getUserRole();
           if (role === 'ADMIN' || role === 'MANAGER') {
-            this.router.navigate(['/admin/dashboard']);
+            this.router.navigate(['/dashboard']);
           } else if (role === 'WAITER') {
-            this.router.navigate(['/waiter/dashboard']);
+            this.router.navigate(['/tables-map']);
           } else {
-            this.router.navigate(['/']);
+            this.router.navigate(['/dashboard']);
           }
         },
         error: (err) => {

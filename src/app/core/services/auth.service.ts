@@ -15,12 +15,16 @@ export class AuthService {
   private currentUserRoleSubject = new BehaviorSubject<UserRole | null>(this.getUserRole());
   currentUserRole$ = this.currentUserRoleSubject.asObservable();
 
+  private currentUserNameSubject = new BehaviorSubject<string | null>(this.getUserName());
+  currentUserName$ = this.currentUserNameSubject.asObservable();
+
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials).pipe(
       tap(response => {
         if (response.token) {
           this.setToken(response.token);
           this.currentUserRoleSubject.next(this.getUserRole());
+          this.currentUserNameSubject.next(this.getUserName());
         }
       })
     );
@@ -29,6 +33,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     this.currentUserRoleSubject.next(null);
+    this.currentUserNameSubject.next(null);
   }
 
   getToken(): string | null {
@@ -60,6 +65,20 @@ export class AuthService {
       const decoded: any = jwtDecode(token);
       // Assuming role is stored in 'role' or 'roles' claim
       return decoded.role || (decoded.roles && decoded.roles[0]) || null;
+    } catch {
+      return null;
+    }
+  }
+
+  getUserName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      // Standard JWT claims: 'sub' (subject, usually email/username) or 'name' (full name)
+      // Attempting to retrieve a name property first, fallback to sub, fallback to 'Usuário'
+      return decoded.name || decoded.sub || 'Usuário';
     } catch {
       return null;
     }

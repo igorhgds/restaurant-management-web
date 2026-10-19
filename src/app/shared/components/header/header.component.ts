@@ -14,7 +14,7 @@ export class HeaderComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  userName = 'João'; // This should ideally come from auth token, hardcoding as per issue description for now or could be extracted if token structure was known. Let's provide a fallback.
+  userName$ = this.authService.currentUserName$;
   userRole$ = this.authService.currentUserRole$;
 
   logout(): void {

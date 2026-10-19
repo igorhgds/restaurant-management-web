@@ -12,7 +12,7 @@
   <div class="flex items-center gap-6">
     <!-- User Info -->
     <div class="flex flex-col items-end hidden md:flex">
-      <span class="text-gray-100 font-['Inter'] text-sm font-medium">{{ userName }}</span>
+      <span class="text-gray-100 font-['Inter'] text-sm font-medium">{{ (userName$ | async) }}</span>
       <span class="text-[#C8A27A] font-['Inter'] text-xs font-semibold tracking-wider">
         {{ (userRole$ | async) === 'WAITER' ? 'Garçom' : ((userRole$ | async) === 'MANAGER' ? 'Gerente' : 'Admin') }}
       </span>
