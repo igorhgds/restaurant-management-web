@@ -11,6 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
   private http = inject(HttpClient);
   private tokenKey = 'auth_token';
+  private userNameKey = 'user_name';
 
   private currentUserRoleSubject = new BehaviorSubject<UserRole | null>(this.getUserRole());
   currentUserRole$ = this.currentUserRoleSubject.asObservable();
@@ -24,7 +25,29 @@ export class AuthService {
         if (response.token) {
           this.setToken(response.token);
           this.currentUserRoleSubject.next(this.getUserRole());
-          this.currentUserNameSubject.next(this.getUserName());
+
+          // Decode token to see if name is inside it
+          let nameFromToken: string | null = null;
+          try {
+             const decoded: any = jwtDecode(response.token);
+             nameFromToken = decoded.name || decoded.fullName || decoded.username || null;
+          } catch (e) {}
+
+          // If the API returns a user object in the login response, we use that name
+          // Assuming the API might return { token: '...', name: 'Igor', role: 'WAITER' } (or similar structure)
+          // If not, we will extract what we can from the credentials email or sub in token
+          let extractedName = nameFromToken || (response as any).name || (response as any).user?.name || (response as any).user?.fullName;
+
+          if (!extractedName && credentials.email) {
+            // fallback: extract from email "igor@email.com" -> "igor" -> "Igor"
+            const namePart = credentials.email.split('@')[0];
+            extractedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          }
+
+          if (!extractedName) extractedName = 'Usuário';
+
+          this.setUserName(extractedName);
+          this.currentUserNameSubject.next(extractedName);
         }
       })
     );
@@ -32,6 +55,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userNameKey);
     this.currentUserRoleSubject.next(null);
     this.currentUserNameSubject.next(null);
   }
@@ -42,6 +66,10 @@ export class AuthService {
 
   private setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
+  }
+
+  private setUserName(name: string): void {
+    localStorage.setItem(this.userNameKey, name);
   }
 
   isAuthenticated(): boolean {
@@ -63,7 +91,6 @@ export class AuthService {
 
     try {
       const decoded: any = jwtDecode(token);
-      // Assuming role is stored in 'role' or 'roles' claim
       return decoded.role || (decoded.roles && decoded.roles[0]) || null;
     } catch {
       return null;
@@ -71,16 +98,6 @@ export class AuthService {
   }
 
   getUserName(): string | null {
-    const token = this.getToken();
-    if (!token) return null;
-
-    try {
-      const decoded: any = jwtDecode(token);
-      // Standard JWT claims: 'sub' (subject, usually email/username) or 'name' (full name)
-      // Attempting to retrieve a name property first, fallback to sub, fallback to 'Usuário'
-      return decoded.name || decoded.sub || 'Usuário';
-    } catch {
-      return null;
-    }
+    return localStorage.getItem(this.userNameKey) || 'Usuário';
   }
 }
